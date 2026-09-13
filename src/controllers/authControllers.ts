@@ -2,6 +2,7 @@ import { prisma } from "../config/db.ts";
 import { Request, Response } from "express";
 
 import bcrypt from "bcryptjs";
+import generateToken from "../utils/generateToken.ts";
 
 const register = async (req: Request, res: Response) => {
   try {
@@ -31,6 +32,9 @@ const register = async (req: Request, res: Response) => {
       },
     });
 
+    // Generate a JWT token for the newly registered user
+    const token = generateToken(user.id, res);
+
     //return response
 
     res.status(201).json({
@@ -41,6 +45,7 @@ const register = async (req: Request, res: Response) => {
           name: name,
           email: email.toLowerCase(),
         },
+        token,
       },
       message: "User registered successfully 🟢",
     });
@@ -76,7 +81,10 @@ const login = async (req: Request, res: Response) => {
         .json({ error: "invalid credentials or user does not exist" });
     }
 
-    // Generate a JWT token
+    // 1.Generate a JWT token
+    // 2.Set token for users browser to use for authentication in future requests
+
+    const token = generateToken(user.id, res);
 
     // login successful, return user data (excluding password)
     res.status(200).json({
@@ -86,6 +94,7 @@ const login = async (req: Request, res: Response) => {
           id: user.id,
           email: user.email.toLowerCase(),
         },
+        token,
       },
       message: "User logged in successfully 🟢",
     });
@@ -95,4 +104,18 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
-export { register, login };
+const logout = (req: Request, res: Response) => {
+  // Clear the JWT cookie
+
+  res.cookie("jwt", "", {
+    httpOnly: true,
+    expires: new Date(0), // Set the cookie to expire in the past
+  });
+
+  res.status(200).json({
+    status: "success",
+    message: "User logged out successfully 🟢",
+  });
+};
+
+export { register, login, logout };
