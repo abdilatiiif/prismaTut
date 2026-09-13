@@ -1,0 +1,62 @@
+// generator: sier at vi vil ha Prisma Client generert (koden du importerer i server.js)
+// "prisma-client-js" genererer ferdig-kompilert JS (i motsetning til "prisma-client",
+// som genererer TypeScript-kildekode) – enklere siden prosjektet er ren JS
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+datasource db {
+  provider = "postgresql"
+}
+
+// database-modellen vår, som vi kan bruke i koden vår. Prisma lager automatisk en tabell for oss i databasen basert på denne modellen
+model User {
+  id       String      @id @default(uuid()) 
+  name     String
+  email    String      @unique
+  password String
+  createdAt DateTime @default(now())
+
+  movies Movie[] @relation("MovieCreator")
+  watchlistItems WatchlistItem[]
+}
+
+model Movie {
+  id          String   @id @default(uuid())
+  title       String
+  overview    String?
+  releaseYear Int
+  genres     String[] @default([])
+  runtime      Int?
+  posterUrl   String?
+  createdBy   String
+  createdAt   DateTime @default(now())
+
+
+  // relasjoner
+  creator User @relation("MovieCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  watchlistItems WatchlistItem[]
+} 
+
+model WatchlistItem {
+  id        String   @id @default(uuid())
+  userId    String
+  movieId   String
+  status WatchlistStatus @default(PLANNED)
+  rating Int?
+  notes String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  // relasjoner
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movie Movie @relation(fields: [movieId], references: [id], onDelete: Cascade)
+}
+
+enum WatchlistStatus {
+  PLANNED
+  WATCHING
+  COMPLETED
+  DROPPED
+}
