@@ -1,10 +1,12 @@
-import express from "express";
+// side-effekt-import: må stå FØR "./config/db.js" importeres, ellers leser
+// PrismaPg process.env.DATABASE_URL før .env er lastet (ESM hoister imports,
+// rekkefølgen imports står i filen er det eneste som styrer dette)
+import "dotenv/config";
 
-import { config } from "dotenv";
+import express from "express";
 
 import { connectToDatabase, disconnectFromDatabase } from "./config/db.js";
 
-config();
 connectToDatabase();
 
 // Import Routes
@@ -27,7 +29,7 @@ app.get("/hello", (req, res) => {
   res.json({ message: "Hello from the server!" });
 });
 
-const PORT = 5001;
+const PORT = 3000;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

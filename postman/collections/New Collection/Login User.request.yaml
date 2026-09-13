@@ -1,0 +1,12 @@
+$kind: http-request
+url: http://localhost:3000/auth/login
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "name": "Hanne Eriksen",
+        "email": "HannaEriksen@mail.com"
+
+    }
+order: 893237684687251
