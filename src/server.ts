@@ -13,6 +13,7 @@ connectToDatabase();
 
 import movieRoutes from "./routes/movieRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import watchlistRoutes from "./routes/watchlistRoutes.js";
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use(express.json());
 app.use("/movies", movieRoutes);
 
 app.use("/auth", authRoutes);
+
+app.use("/watchlist", watchlistRoutes);
 
 app.get("/hello", (req, res) => {
   res.json({ message: "Hello from the server!" });

@@ -1,0 +1,13 @@
+$kind: http-request
+description: ""
+url: http://localhost:3000/watchlist
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "name": "Lars hansen",
+        "email": "larshh@mail.com",
+        "password": "Fiksen1232"
+    }
+order: 4493037895817227
